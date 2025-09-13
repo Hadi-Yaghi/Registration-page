@@ -4,49 +4,36 @@ void main() {
   runApp(const MyApp());
 }
 
+// The root widget of the app
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
+      debugShowCheckedModeBanner: false, // remove the debug banner
+      title: 'Flutter Registration Demo',
       theme: ThemeData(
-        // This is the theme of your application.
-        //
-        // TRY THIS: Try running your application with "flutter run". You'll see
-        // the application has a purple toolbar. Then, without quitting the app,
-        // try changing the seedColor in the colorScheme below to Colors.green
-        // and then invoke "hot reload" (save your changes or press the "hot
-        // reload" button in a Flutter-supported IDE, or press "r" if you used
-        // the command line to start the app).
-        //
-        // Notice that the counter didn't reset back to zero; the application
-        // state is not lost during the reload. To reset the state, use hot
-        // restart instead.
-        //
-        // This works for code too, not just values: Most code changes can be
-        // tested with just a hot reload.
+        // Set theme colors
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+        // Default style for text fields
+        inputDecorationTheme: const InputDecorationTheme(
+          filled: true, // background fill
+          fillColor: Colors.white,
+          contentPadding: EdgeInsets.symmetric(vertical: 15, horizontal: 20),
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.all(Radius.circular(12)), // rounded corners
+          ),
+        ),
       ),
-      home: const MyHomePage(title: 'Flutter Demo Home Page'),
+      home: const MyHomePage(title: 'Registration Page'),
     );
   }
 }
 
+// Stateful widget because we need to change password visibility
 class MyHomePage extends StatefulWidget {
   const MyHomePage({super.key, required this.title});
-
-  // This widget is the home page of your application. It is stateful, meaning
-  // that it has a State object (defined below) that contains fields that affect
-  // how it looks.
-
-  // This class is the configuration for the state. It holds the values (in this
-  // case the title) provided by the parent (in this case the App widget) and
-  // used by the build method of the State. Fields in a Widget subclass are
-  // always marked "final".
-
   final String title;
 
   @override
@@ -54,69 +41,168 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
-
-  void _incrementCounter() {
-    setState(() {
-      // This call to setState tells the Flutter framework that something has
-      // changed in this State, which causes it to rerun the build method below
-      // so that the display can reflect the updated values. If we changed
-      // _counter without calling setState(), then the build method would not be
-      // called again, and so nothing would appear to happen.
-      _counter++;
-    });
-  }
+  // Variable to toggle password visibility
+  bool _obscurePassword = true;
 
   @override
   Widget build(BuildContext context) {
-    // This method is rerun every time setState is called, for instance as done
-    // by the _incrementCounter method above.
-    //
-    // The Flutter framework has been optimized to make rerunning build methods
-    // fast, so that you can just rebuild anything that needs updating rather
-    // than having to individually change instances of widgets.
     return Scaffold(
-      appBar: AppBar(
-        // TRY THIS: Try changing the color here to a specific color (to
-        // Colors.amber, perhaps?) and trigger a hot reload to see the AppBar
-        // change color while the other colors stay the same.
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        // Here we take the value from the MyHomePage object that was created by
-        // the App.build method, and use it to set our appbar title.
-        title: Text(widget.title),
-      ),
-      body: Center(
-        // Center is a layout widget. It takes a single child and positions it
-        // in the middle of the parent.
-        child: Column(
-          // Column is also a layout widget. It takes a list of children and
-          // arranges them vertically. By default, it sizes itself to fit its
-          // children horizontally, and tries to be as tall as its parent.
-          //
-          // Column has various properties to control how it sizes itself and
-          // how it positions its children. Here we use mainAxisAlignment to
-          // center the children vertically; the main axis here is the vertical
-          // axis because Columns are vertical (the cross axis would be
-          // horizontal).
-          //
-          // TRY THIS: Invoke "debug painting" (choose the "Toggle Debug Paint"
-          // action in the IDE, or press "p" in the console), to see the
-          // wireframe for each widget.
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            const Text('You have pushed the button this many times:'),
-            Text(
-              '$_counter',
-              style: Theme.of(context).textTheme.headlineMedium,
-            ),
-          ],
+      // Background with gradient
+      body: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 20),
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            colors: [Colors.deepPurple, Colors.purpleAccent],
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+          ),
+        ),
+        child: SingleChildScrollView(
+          // Allows scrolling when keyboard is open
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const SizedBox(height: 60),
+
+              // Profile picture placeholder
+              Center(
+                child: Stack(
+                  children: [
+                    const CircleAvatar(
+                      radius: 50,
+                      backgroundColor: Colors.white70,
+                      child: Icon(
+                        Icons.person,
+                        size: 50,
+                        color: Colors.deepPurple,
+                      ),
+                    ),
+                    // Small edit icon on profile
+                    Positioned(
+                      bottom: 0,
+                      right: 0,
+                      child: Container(
+                        decoration: const BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: Colors.deepPurple,
+                        ),
+                        child: const Icon(
+                          Icons.edit,
+                          color: Colors.white,
+                          size: 20,
+                        ),
+                      ),
+                    )
+                  ],
+                ),
+              ),
+              const SizedBox(height: 40),
+
+              // Full Name Field
+              const Text("Full Name",
+                  style: TextStyle(color: Colors.white, fontSize: 16)),
+              const SizedBox(height: 8),
+              const TextField(
+                decoration: InputDecoration(
+                  hintText: "Enter your Full Name",
+                  prefixIcon: Icon(Icons.person_outline), // icon
+                ),
+              ),
+              const SizedBox(height: 15),
+
+              // Email Field
+              const Text("Email",
+                  style: TextStyle(color: Colors.white, fontSize: 16)),
+              const SizedBox(height: 8),
+              const TextField(
+                decoration: InputDecoration(
+                  hintText: "Enter your Email",
+                  prefixIcon: Icon(Icons.email_outlined), // icon
+                ),
+              ),
+              const SizedBox(height: 15),
+
+              // Phone Field
+              const Text("Phone",
+                  style: TextStyle(color: Colors.white, fontSize: 16)),
+              const SizedBox(height: 8),
+              const TextField(
+                decoration: InputDecoration(
+                  hintText: "Enter your Phone Number",
+                  prefixIcon: Icon(Icons.phone_android), // icon
+                ),
+              ),
+              const SizedBox(height: 15),
+
+              // Country Field
+              const Text("Country",
+                  style: TextStyle(color: Colors.white, fontSize: 16)),
+              const SizedBox(height: 8),
+              const TextField(
+                decoration: InputDecoration(
+                  hintText: "Enter your Country",
+                  prefixIcon: Icon(Icons.flag_outlined), // icon
+                ),
+              ),
+              const SizedBox(height: 15),
+
+              // Password Field with show/hide
+              const Text("Password",
+                  style: TextStyle(color: Colors.white, fontSize: 16)),
+              const SizedBox(height: 8),
+              TextField(
+                obscureText: _obscurePassword, // hide/show password
+                decoration: InputDecoration(
+                  hintText: "Enter your Password",
+                  prefixIcon: const Icon(Icons.lock_outline),
+                  // Eye button to toggle visibility
+                  suffixIcon: IconButton(
+                    icon: Icon(
+                      _obscurePassword
+                          ? Icons.visibility_off
+                          : Icons.visibility,
+                    ),
+                    onPressed: () {
+                      setState(() {
+                        _obscurePassword = !_obscurePassword; // toggle
+                      });
+                    },
+                  ),
+                ),
+              ),
+              const SizedBox(height: 30),
+
+              // Register Button
+              Center(
+                child: ElevatedButton.icon(
+                  onPressed: () {
+                    // Here you will handle registration logic (send to DB or Firebase)
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text("Register button pressed")),
+                    );
+                  },
+                  icon: const Icon(Icons.check),
+                  label: const Text("Register"),
+                  style: ElevatedButton.styleFrom(
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 80, vertical: 15),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    backgroundColor: Colors.white,
+                    foregroundColor: Colors.deepPurple,
+                    textStyle: const TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 50),
+            ],
+          ),
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
-        child: const Icon(Icons.add),
-      ), // This trailing comma makes auto-formatting nicer for build methods.
     );
   }
 }
