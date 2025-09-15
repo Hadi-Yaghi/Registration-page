@@ -19,136 +19,101 @@ class Registration extends GetView<RegistrationController> {
         ),
         child: SingleChildScrollView(
           child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               const SizedBox(height: 60),
 
               // Profile picture placeholder
-              Center(
-                child: Stack(
-                  children: [
-                    const CircleAvatar(
-                      radius: 50,
-                      backgroundColor: Colors.white70,
-                      child: Icon(
-                        Icons.person,
-                        size: 50,
-                        color: Colors.deepPurple,
-                      ),
+              Stack(
+                alignment: Alignment.bottomRight,
+                children: [
+                  const CircleAvatar(
+                    radius: 55,
+                    backgroundColor: Colors.white,
+                    child: Icon(
+                      Icons.person,
+                      size: 55,
+                      color: Colors.deepPurple,
                     ),
-                    Positioned(
-                      bottom: 0,
-                      right: 0,
-                      child: Container(
-                        decoration: const BoxDecoration(
-                          shape: BoxShape.circle,
-                          color: Colors.deepPurple,
-                        ),
-                        child: const Icon(
-                          Icons.edit,
-                          color: Colors.white,
-                          size: 20,
-                        ),
-                      ),
-                    )
-                  ],
-                ),
+                  ),
+                  CircleAvatar(
+                    radius: 18,
+                    backgroundColor: Colors.deepPurple,
+                    child: const Icon(Icons.edit, size: 18, color: Colors.white),
+                  )
+                ],
               ),
               const SizedBox(height: 40),
 
               // Full Name
               buildLabel("Full Name"),
-              TextField(
-                onChanged: (val) => controller.fullName.value = val,
-                decoration: const InputDecoration(
-                  hintText: "Enter your Full Name",
-                  prefixIcon: Icon(Icons.person_outline),
-                ),
+              buildTextField(
+                controller.name, // connected ✅
+                hint: "Enter your full name",
+                icon: Icons.person_outline,
               ),
-              const SizedBox(height: 15),
 
               // Email
               buildLabel("Email"),
-              TextField(
-                onChanged: (val) => controller.email.value = val,
-                decoration: const InputDecoration(
-                  hintText: "Enter your Email",
-                  prefixIcon: Icon(Icons.email_outlined),
-                ),
+              buildTextField(
+                controller.email, // connected ✅
+                hint: "Enter your email",
+                icon: Icons.email_outlined,
+                inputType: TextInputType.emailAddress,
               ),
-              const SizedBox(height: 15),
-
-              // Phone
-              buildLabel("Phone"),
-              TextField(
-                onChanged: (val) => controller.phone.value = val,
-                decoration: const InputDecoration(
-                  hintText: "Enter your Phone Number",
-                  prefixIcon: Icon(Icons.phone_android),
-                ),
-              ),
-              const SizedBox(height: 15),
-
-              // Country
-              buildLabel("Country"),
-              TextField(
-                onChanged: (val) => controller.country.value = val,
-                decoration: const InputDecoration(
-                  hintText: "Enter your Country",
-                  prefixIcon: Icon(Icons.flag_outlined),
-                ),
-              ),
-              const SizedBox(height: 15),
 
               // Password
               buildLabel("Password"),
-              Obx(() => TextField(
-                    onChanged: (val) => controller.password.value = val,
-                    obscureText: controller.obscurePassword.value,
-                    decoration: InputDecoration(
-                      hintText: "Enter your Password",
-                      prefixIcon: const Icon(Icons.lock_outline),
-                      suffixIcon: IconButton(
-                        icon: Icon(
-                          controller.obscurePassword.value
-                              ? Icons.visibility_off
-                              : Icons.visibility,
-                        ),
-                        onPressed: () {
-                          controller.obscurePassword.value =
-                              !controller.obscurePassword.value;
-                        },
+              Obx(() => buildTextField(
+                    controller.password, // connected ✅
+                    hint: "Enter your password",
+                    icon: Icons.lock_outline,
+                    obscure: !controller.isPasswordVisible.value,
+                    suffix: IconButton(
+                      icon: Icon(
+                        controller.isPasswordVisible.value
+                            ? Icons.visibility
+                            : Icons.visibility_off,
+                        color: Colors.deepPurple,
                       ),
+                      onPressed: () {
+                        controller.isPasswordVisible.toggle();
+                      },
                     ),
                   )),
-              const SizedBox(height: 30),
+
+              // Password Confirmation
+              buildLabel("Confirm Password"),
+              Obx(() => buildTextField(
+                    controller.passwordConfirmation, // new field ✅
+                    hint: "Re-enter your password",
+                    icon: Icons.lock_outline,
+                    obscure: !controller.isPasswordVisible.value,
+                  )),
+
+              const SizedBox(height: 35),
 
               // Register Button
-              Center(
-                child: ElevatedButton.icon(
-                  onPressed: () {
-                    
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text("Register button pressed")),
-                    );
-                  },
-                  icon: const Icon(Icons.check),
-                  label: const Text("Register"),
-                  style: ElevatedButton.styleFrom(
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 80, vertical: 15),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    backgroundColor: Colors.white,
-                    foregroundColor: Colors.deepPurple,
-                    textStyle: const TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                    ),
+              ElevatedButton.icon(
+                onPressed: () => controller.registerUser(),
+                icon: const Icon(Icons.check),
+                label: const Text("Register"),
+                style: ElevatedButton.styleFrom(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 100, vertical: 16),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(14),
+                  ),
+                  backgroundColor: Colors.white,
+                  foregroundColor: Colors.deepPurple,
+                  elevation: 4,
+                  textStyle: const TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
                   ),
                 ),
               ),
+
               const SizedBox(height: 50),
             ],
           ),
@@ -157,12 +122,49 @@ class Registration extends GetView<RegistrationController> {
     );
   }
 
+  // Label widget
   Widget buildLabel(String text) {
     return Padding(
-      padding: const EdgeInsets.only(bottom: 8.0),
-      child: Text(
-        text,
-        style: const TextStyle(color: Colors.white, fontSize: 16),
+      padding: const EdgeInsets.only(bottom: 6, top: 16),
+      child: Align(
+        alignment: Alignment.centerLeft,
+        child: Text(
+          text,
+          style: const TextStyle(
+            color: Colors.white,
+            fontSize: 16,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+      ),
+    );
+  }
+
+  // Reusable TextField
+  Widget buildTextField(
+    TextEditingController controller, {
+    required String hint,
+    required IconData icon,
+    bool obscure = false,
+    TextInputType inputType = TextInputType.text,
+    Widget? suffix,
+  }) {
+    return TextField(
+      controller: controller,
+      obscureText: obscure,
+      keyboardType: inputType,
+      decoration: InputDecoration(
+        filled: true,
+        fillColor: Colors.white.withOpacity(0.9),
+        hintText: hint,
+        prefixIcon: Icon(icon, color: Colors.deepPurple),
+        suffixIcon: suffix,
+        contentPadding:
+            const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: BorderSide.none,
+        ),
       ),
     );
   }
